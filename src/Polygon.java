@@ -65,11 +65,12 @@ public class Polygon extends Figure
 
 	public void export() throws IOException{
 		System.out.println(toString());
-		File file  = new File("src/Exports/Polygons.txt");
+		File file  = new File("../Exports/Polygons.txt");
 		OutputStream f = new FileOutputStream(file);
 		ObjectOutputStream out = new ObjectOutputStream(f);
 		out.writeObject(toString());
 		out.close();
+		System.out.println(toString() + " has been exported");
 	}
 
 	public LinkedList<Point> getPoints() {

@@ -76,7 +76,7 @@ public class Segment extends Figure
 
 	public void export() throws IOException{
 		System.out.println(toString());
-		File file  = new File("src/Exports/Segments.txt");
+		File file  = new File("../Exports/Segments.txt");
 		OutputStream f = new FileOutputStream(file);
 		ObjectOutputStream out = new ObjectOutputStream(f);
 		out.writeObject(toString());

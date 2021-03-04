@@ -73,7 +73,7 @@ public class Point extends Figure {
 	}
 
 	public void export() throws IOException{
-		File file  = new File("src/Exports/Points.txt");
+		File file  = new File("../Exports/Points.txt");
 		OutputStream f = new FileOutputStream(file);
 		ObjectOutputStream out = new ObjectOutputStream(f);
 		out.writeObject(toString());

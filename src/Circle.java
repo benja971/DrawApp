@@ -67,7 +67,7 @@ public class Circle extends Figure
 
 	public void export() throws IOException{
 		System.out.println(toString());
-		File file  = new File("src/Exports/Circles.txt");
+		File file  = new File("../Exports/Circles.txt");
 		OutputStream f = new FileOutputStream(file);
 		ObjectOutputStream out = new ObjectOutputStream(f);
 		out.writeObject(toString());
