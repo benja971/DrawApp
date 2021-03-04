@@ -29,11 +29,11 @@ public class Editeur extends JFrame {
             ed1.figures.add(new Circle(new Point("P"+ i, (int)(Math.random()*((500-1)+1))+1, (int)(Math.random()*((500-1)+1))+1), new Point("P"+ i, (int)(Math.random()*((500-1)+1))+1, (int)(Math.random()*((500-1)+1))+1))) ;
         }
 
-        for (Figure figure : ed1.figures) {
-            figure.paint(ed1.jf);
-        }
-
     }
-
+    public void paint(Graphics gc) { 
+        for (Figure figure : ed1.figures) {
+        figure.paint(ed1.jf);
+        }
+    }
 
 }
