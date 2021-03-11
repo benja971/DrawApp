@@ -1,9 +1,10 @@
-import java.io.IOException;
-import java.io.Serializable;
-import java.awt.*;
 /**
  * InnerFigure
  */
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.awt.*;
 
 public abstract class Figure implements Cloneable, Serializable{
 
@@ -38,7 +39,7 @@ public abstract class Figure implements Cloneable, Serializable{
 
 	public abstract Figure clone();
 	
-	public abstract void export() throws IOException;
+	public abstract void export(ObjectOutputStream out) throws IOException;
 
 	public abstract void paint(Graphics g);
 }

@@ -2,11 +2,8 @@
  * InnerSegment
  */
 import java.awt.Graphics;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 
 public class Segment extends Figure
 {
@@ -74,13 +71,8 @@ public class Segment extends Figure
 		return new Segment(this);
 	}
 
-	public void export() throws IOException{
-		System.out.println(toString());
-		File file  = new File("../Exports/Segments.txt");
-		OutputStream f = new FileOutputStream(file);
-		ObjectOutputStream out = new ObjectOutputStream(f);
-		out.writeObject(toString());
-		out.close();
+	public void export(ObjectOutputStream out) throws IOException{
+		out.writeObject(this);
 		System.out.println(toString() + " has been exported");
 	}
 

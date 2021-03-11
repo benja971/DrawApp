@@ -1,11 +1,17 @@
-import java.io.IOException;
-
 /**
  * Main
  */
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+
 public class Main {
 	public static void main(String[] args) throws IOException{
 		System.out.println("Point class tests:");
+
+		OutputStream f = new FileOutputStream("Exports/Figures.txt");
+		ObjectOutputStream out = new ObjectOutputStream(f);
 
 		Point A = new Point("A", 5, -3);
 		Point B = new Point(A);
@@ -27,7 +33,9 @@ public class Main {
 
 		Point C = A.clone();
 
-		C.export();
+		A.export(out); 
+		B.export(out); 
+		C.export(out); 
 
 
 		System.out.println("\n\nSegment class tests:");
@@ -55,7 +63,7 @@ public class Main {
 
 		Segment S4 = S2.clone();
 
-		S4.export();
+		S4.export(out);
 
 
 		System.out.println("\n\nCircle class tests:");
@@ -80,6 +88,8 @@ public class Main {
 
 		Circle C4 = C2.clone();
 
-		C4.export();
+		C4.export(out);
+
+		out.close();
 	}
 }

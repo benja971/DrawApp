@@ -1,13 +1,11 @@
-import java.awt.Graphics;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-
 /**
  * InnerPoint
  */
+import java.awt.Graphics;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
+
 public class Point extends Figure {
 	
 	private static final long serialVersionUID = 1L;
@@ -72,12 +70,8 @@ public class Point extends Figure {
 		return new Point(this);
 	}
 
-	public void export() throws IOException{
-		File file  = new File("../Exports/Points.txt");
-		OutputStream f = new FileOutputStream(file);
-		ObjectOutputStream out = new ObjectOutputStream(f);
-		out.writeObject(toString());
-		out.close();
+	public void export(ObjectOutputStream out) throws IOException{
+		out.writeObject(this);
 		System.out.println(toString() + " has been exported");
 	}
 

@@ -2,11 +2,8 @@
  * InnerPolygon
  */
 import java.awt.Graphics;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.LinkedList;
 
 public class Polygon extends Figure
@@ -63,13 +60,8 @@ public class Polygon extends Figure
 		return new Polygon(this);
 	}
 
-	public void export() throws IOException{
-		System.out.println(toString());
-		File file  = new File("../Exports/Polygons.txt");
-		OutputStream f = new FileOutputStream(file);
-		ObjectOutputStream out = new ObjectOutputStream(f);
-		out.writeObject(toString());
-		out.close();
+	public void export(ObjectOutputStream out) throws IOException{
+		out.writeObject(this);
 		System.out.println(toString() + " has been exported");
 	}
 
@@ -86,9 +78,16 @@ public class Polygon extends Figure
 	}
 
 	public void paint(Graphics gc) {
+		int x[]= new int[50], y[]= new int[50], i = 0;
+
 		for (Point point : points) {
 			gc.drawLine(point.getX(), point.getY(), point.getX(), point.getY());
+			x[i] = point.getX();
+			y[i] = point.getY();
+			i++;
 		}
 		
+		gc.drawPolygon(x, y, points.size());
+
 	}
 }

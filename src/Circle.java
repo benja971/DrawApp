@@ -2,11 +2,8 @@
  * Circle
  */
 import java.awt.Graphics;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
  
 public class Circle extends Figure
 {
@@ -65,13 +62,9 @@ public class Circle extends Figure
 		return new Circle(this);
 	}
 
-	public void export() throws IOException{
-		System.out.println(toString());
-		File file  = new File("../Exports/Circles.txt");
-		OutputStream f = new FileOutputStream(file);
-		ObjectOutputStream out = new ObjectOutputStream(f);
-		out.writeObject(toString());
-		out.close();
+	public void export(ObjectOutputStream out) throws IOException{
+		out.writeObject(this);
+		System.out.println(toString() + " has been exported");
 	}
 
 	public void paint(Graphics gc) {
