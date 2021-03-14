@@ -68,7 +68,8 @@ public class Circle extends Figure
 	}
 
 	public void paint(Graphics gc) {
-		gc.drawOval(center.getX(), center.getY(), rayon, rayon);		
+		center.paint(gc);
+		gc.drawOval(center.getX() - rayon/2, center.getY() - rayon/2, rayon, rayon);		
 	}
 
 }

@@ -77,8 +77,8 @@ public class Segment extends Figure
 	}
 
 	public void paint(Graphics gc) {
-		gc.drawLine(p1.getX(), p1.getY(), p1.getX(), p1.getY());
-		gc.drawLine(p2.getX(), p2.getY(), p2.getX(), p2.getY());
+		p1.paint(gc);
+		p2.paint(gc);
 		gc.drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
 	}
 

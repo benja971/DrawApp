@@ -76,7 +76,6 @@ public class Point extends Figure {
 	}
 
 	public void paint(Graphics gc) {
-		gc.drawLine(x, y, x, y);
+		gc.fillOval(x - 3, y - 3, 6, 6);		
 	}
-
 }

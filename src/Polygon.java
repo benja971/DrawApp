@@ -16,10 +16,12 @@ public class Polygon extends Figure
 		this.points = points;
 	}
 
-	public Polygon(String n, Point[] points) {
+	public Polygon(String n, Point[] pts, int nbr) {
 		super(n);
-		for (Point point : points) {
-			this.points.add(point);
+		points = new LinkedList<Point>();
+		
+		for (int i = 0; i < nbr; i++) {
+			this.points.add(pts[i]);
 		}
 	}
 
@@ -29,7 +31,7 @@ public class Polygon extends Figure
 	}
 
 	public String toString() {
-		return "Polygon [name=" + getName() + "points=" + points + "]";
+		return "Polygon [name=" + getName() +", "+ points.size() + " points" + "]";
 	}
 
 	public void afficher() {
@@ -73,15 +75,50 @@ public class Polygon extends Figure
 		this.points = points;
 	}
 
-	public boolean equals(Object f2) {
-		return false;
-	}
+	public boolean equals(Object f) {
+        Polygon p2 = (Polygon)f;
+        
+        if(p2.points.size() != points.size()) {
+            return false;
+        }
+        
+        int i = 0;
+        int j = 0;
+        j = p2.points.indexOf(points.get(i));
+        if(j == -1) {
+            return false;
+        }
+        
+        int nbCorrespondance = 1;
+        j = j+1;
+        for(i = 0; i < points.size(); i++, j++) {
+            if(points.get(i).equals(p2.points.get(j%points.size()))) {
+                nbCorrespondance++;
+            }
+        }
+        if(nbCorrespondance == points.size()) {
+            return true;
+        }
+        
+        nbCorrespondance = 1;
+        j = p2.points.indexOf(points.get(i));
+        for(i = 1;i < points.size(); i++, j--) {
+            if(points.get(i).equals(p2.points.get(j%points.size()))) {
+                nbCorrespondance ++;
+            }
+        }
+        if(nbCorrespondance == points.size()) {
+            return true;
+        }
+        
+        return false;
+    }
 
 	public void paint(Graphics gc) {
 		int x[]= new int[50], y[]= new int[50], i = 0;
 
 		for (Point point : points) {
-			gc.drawLine(point.getX(), point.getY(), point.getX(), point.getY());
+			point.paint(gc);
 			x[i] = point.getX();
 			y[i] = point.getY();
 			i++;
