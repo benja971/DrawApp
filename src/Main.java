@@ -118,6 +118,10 @@ public class Main {
 		System.out.println("Polygon P2 after translate of 3, -3: ");
 		P2.afficher();	
 
+		P2.add(new Point("Z", rand.nextInt(16)-8, rand.nextInt(16)-8));
+
+		P2.afficher();	
+
 		System.out.println("P2's center => " + P2.getCenter());
 
 		System.out.println("P1 equals P2 ? =>  " + P1.equals(P3)); //Ne fonctionne pas

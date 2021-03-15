@@ -127,4 +127,12 @@ public class Polygon extends Figure
 		gc.drawPolygon(x, y, points.size());
 
 	}
+
+	public Boolean add(Point p) {
+		if (points.indexOf(p) == -1) {
+			points.add(p);
+			return true;
+		}
+		return false;
+	}
 }
