@@ -1,6 +1,6 @@
-/**
- * InnerPolygon
- */
+package DrawApp;
+
+import java.awt.Color;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -11,13 +11,18 @@ public class Polygon extends Figure
 	private static final long serialVersionUID = 1L;
     private LinkedList<Point> points;
      
-	public Polygon(String n, LinkedList<Point> points) {
-		super(n);
+	public Polygon(String n, LinkedList<Point> points, Color c) {
+		super(n, c);
 		this.points = points;
 	}
 
-	public Polygon(String n, Point[] pts, int nbr) {
-		super(n);
+	public Polygon(LinkedList<Point> points, Color c) {
+		super("Poly", c);
+		this.points = points;
+	}
+
+	public Polygon(String n, Point[] pts, int nbr, Color c) {
+		super(n, c);
 		points = new LinkedList<Point>();
 		
 		for (int i = 0; i < nbr; i++) {
@@ -26,7 +31,7 @@ public class Polygon extends Figure
 	}
 
 	public Polygon(Polygon p) {
-		super(p.getName());
+		super(p.getName(), p.getColor());
 		this.points = p.getPoints();
 	}
 
@@ -49,7 +54,7 @@ public class Polygon extends Figure
         x /= points.size();
         y /= points.size();
 
-		return new Point(n, x, y);
+		return new Point(n, x, y, getColor());
 	}
 
 	public void translate(int tx, int ty) {
@@ -115,6 +120,7 @@ public class Polygon extends Figure
     }
 
 	public void paint(Graphics gc) {
+		gc.setColor(super.getColor());
 		int x[]= new int[50], y[]= new int[50], i = 0;
 
 		for (Point point : points) {
@@ -125,7 +131,6 @@ public class Polygon extends Figure
 		}
 		
 		gc.drawPolygon(x, y, points.size());
-
 	}
 
 	public Boolean add(Point p) {

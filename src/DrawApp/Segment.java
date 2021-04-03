@@ -1,6 +1,6 @@
-/**
- * InnerSegment
- */
+package DrawApp;
+
+import java.awt.Color;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -11,20 +11,20 @@ public class Segment extends Figure
 	private Point p1;
 	private Point p2;
 
-	public Segment(String n, Point p1, Point p2){
-		super(n);
+	public Segment(String n, Point p1, Point p2, Color c){
+		super(n, c);
 		this.p1 = p1;
 		this.p2 = p2;
 	}
 
-	public Segment(Point p1, Point p2){
-		super(p1.getName() + p2.getName());
+	public Segment(Point p1, Point p2, Color c){
+		super(p1.getName() + p2.getName(), c);
 		this.p1 = p1;
 		this.p2 = p2;
 	}
 
 	public Segment(Segment s) {
-		super(s.getName());
+		super(s.getName(), s.getColor());
 		this.p1 = s.getP1();
 		this.p2 = s.getP2();
 	}
@@ -55,7 +55,7 @@ public class Segment extends Figure
 	}
 
 	public Point getCenter(){
-		return new Point(p1.getName() + p2.getName() , (p1.getX() + p2.getX())/2, (p1.getY() + p2.getY())/2);
+		return new Point(p1.getName() + p2.getName() , (p1.getX() + p2.getX())/2, (p1.getY() + p2.getY())/2, getColor());
 	}
 
 	public double calculDistance(){
@@ -77,6 +77,7 @@ public class Segment extends Figure
 	}
 
 	public void paint(Graphics gc) {
+		gc.setColor(super.getColor());
 		p1.paint(gc);
 		p2.paint(gc);
 		gc.drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());

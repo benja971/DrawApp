@@ -1,6 +1,6 @@
-/**
- * Circle
- */
+package DrawApp;
+
+import java.awt.Color;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -11,20 +11,20 @@ public class Circle extends Figure
 	private Point center;
 	private int rayon;
 
-	public Circle(String n, Point center, int rayon) {
-		super(n);
+	public Circle(String n, Point center, int rayon, Color c) {
+		super(n, c);
 		this.center = center;
 		this.rayon = rayon;
 	}
 
-	public Circle(Point p1, Point p2){
-		super("C" + p1.getName()+p2.getName());
+	public Circle(Point p1, Point p2, Color c){
+		super("C" + p1.getName() + p2.getName(), c);
 		this.center = p1;
-		this.rayon = (int) center.getDistance(p2);
+		this.rayon = (int)center.getDistance(p2) * 2;
 	}
 
 	public Circle(Circle c){
-		super(c.getName());
+		super(c.getName(), c.getColor());
 		this.center = c.getCenter();
 		this.rayon = c.getRayon();
 	}
@@ -68,8 +68,13 @@ public class Circle extends Figure
 	}
 
 	public void paint(Graphics gc) {
+		gc.setColor(super.getColor());
 		center.paint(gc);
 		gc.drawOval(center.getX() - rayon/2, center.getY() - rayon/2, rayon, rayon);		
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 }

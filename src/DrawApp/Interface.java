@@ -1,10 +1,14 @@
+package DrawApp;
+
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
@@ -28,9 +32,9 @@ public class Interface extends JFrame implements ActionListener {
     private JButton BSegmt;
     private JButton BCircle;
     private JButton BPolygon;
-    private JButton Color;
+    private JButton BColor;
+    private JButton BClear;
     private Editeur ed1;
-    private JColorChooser colorsC;
     private Container content;
 
     public Interface(String name) {
@@ -38,6 +42,7 @@ public class Interface extends JFrame implements ActionListener {
         dimension = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         setSize((int)(dimension.getWidth()/2), (int)(dimension.getHeight()/2));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
         hotbar = new JPanel();
         menu = new JPanel();
@@ -46,23 +51,30 @@ public class Interface extends JFrame implements ActionListener {
         file = new JMenu("File");
         home = new JMenu("Home");
         display = new JMenu("Display");
+
+        ImageIcon point = new ImageIcon("Images/Icon_dot.png");
+        ImageIcon sgmt = new ImageIcon("Images/Icon_line.png");
+        ImageIcon circle = new ImageIcon("Images/Icon_circle.png");
+        ImageIcon poly = new ImageIcon("Images/Icon_polygon.jpg");
+        ImageIcon clear = new ImageIcon("Images/Icon_clear.jpg");
     
-        BPoint = new JButton("Point");
-        BSegmt = new JButton("Segment");
-        BCircle = new JButton("Circle");
-        BPolygon = new JButton("Polygon");
-        Color = new JButton("Color");
+        BPoint = new JButton("Point", point);
+        BSegmt = new JButton("Segment", sgmt);
+        BCircle = new JButton("Circle", circle);
+        BPolygon = new JButton("Polygon", poly);
+        BColor = new JButton("Color");
+        BClear = new JButton("Clear", clear);
     
         ed1 = new Editeur();
     
-        colorsC = new JColorChooser();
-        
         content = this.getContentPane();
-        
+    
         BPoint.addActionListener(this);
         BSegmt.addActionListener(this);
         BCircle.addActionListener(this);
         BPolygon.addActionListener(this);
+        BColor.addActionListener(this);
+        BClear.addActionListener(this);
     
         hotbar.setLayout(new GridLayout(2, 1));
         menu.setLayout(new GridLayout());
@@ -75,9 +87,11 @@ public class Interface extends JFrame implements ActionListener {
         menu.add(BSegmt);
         menu.add(BCircle);
         menu.add(BPolygon);
-        menu.add(Color);
+        menu.add(BColor);
+        menu.add(BClear);
     
         ed1.addMouseListener(ed1);
+        ed1.addMouseMotionListener(ed1);
     
         hotbar.add(mb); 
         hotbar.add(menu); 
@@ -87,13 +101,20 @@ public class Interface extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        //Ne pas oublier de chnager les layout de base des jpannels
+        //Ne pas oublier de changer les layout de base des jpannels
         Interface gui = new Interface("DrawApp");
         gui.setVisible(true);
     }
 
     public void actionPerformed(ActionEvent evt) {
         JButton source = (JButton)evt.getSource();
-        ed1.setSelectedFigure(source.getText());
+        String txt = source.getText();
+        if (txt != "Color") {
+            ed1.setSelectedFigure(txt);
+        }
+        else{  
+            Color c = JColorChooser.showDialog(this,"Select a color",ed1.getInitialcolor());
+            ed1.setColor(c);
+        }
     }
 }

@@ -1,6 +1,6 @@
-/**
- * InnerPoint
- */
+package DrawApp;
+
+import java.awt.Color;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -12,14 +12,20 @@ public class Point extends Figure {
 	private int x;
 	private int y;
 	
-	public Point(String n, int x, int y){
-		super(n);
+	public Point(String n, int x, int y, Color c){
+		super(n, c);
+		this.x = x;
+		this.y = y;
+	}
+
+	public Point(int x, int y, Color c){
+		super("Point", c);
 		this.x = x;
 		this.y = y;
 	}
 
 	public Point(Point p) {
-		super(p.getName());
+		super(p.getName(), p.getColor());
 		this.x = p.getX();
 		this.y = p.getY();
 	}
@@ -57,8 +63,8 @@ public class Point extends Figure {
 		return this;
 	}
 
-	public double getDistance(Point p2) {
-		return Math.sqrt(Math.pow((p2.getX() - this.x), 2) + Math.pow((p2.getY() - this.y), 2));
+	public int getDistance(Point p2) {
+		return (int) Math.sqrt(Math.pow((p2.getX() - getX()), 2) + Math.pow((p2.getY() - getY()), 2));
 	}
 
 	public boolean equals(Object p2) {
@@ -76,6 +82,7 @@ public class Point extends Figure {
 	}
 
 	public void paint(Graphics gc) {
+		gc.setColor(super.getColor());
 		gc.fillOval(x - 3, y - 3, 6, 6);		
 	}
 }

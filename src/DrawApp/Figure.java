@@ -1,18 +1,20 @@
-/**
- * InnerFigure
- */
+package DrawApp;
+
+import java.awt.Color;
+import java.awt.Graphics;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.awt.*;
 
 public abstract class Figure implements Cloneable, Serializable{
 
 	private static final long serialVersionUID = 1L;
 	private String name;
+	private Color color;
 
-	public Figure(String n){
+	public Figure(String n, Color c){
 		name = n;
+		color = c;
 	}
 
 	public String getName() {
@@ -42,4 +44,12 @@ public abstract class Figure implements Cloneable, Serializable{
 	public abstract void export(ObjectOutputStream out) throws IOException;
 
 	public abstract void paint(Graphics g);
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
 }
