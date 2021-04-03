@@ -20,11 +20,14 @@ public class Editeur extends JPanel implements MouseInputListener{
     private Boolean tmp_figure;
     private Color initialcolor;
     private Color color;
+    private Boolean clicked;
     
     public Editeur(){
         figures = new LinkedList<Figure>();
         tmp_points = new LinkedList<Point>();
         initialcolor = Color.RED;
+        clicked = false;
+        selectedFigure = "Point";
         repaint();
     }
     
@@ -32,6 +35,7 @@ public class Editeur extends JPanel implements MouseInputListener{
         figures = f;
         tmp_points = new LinkedList<Point>();
         initialcolor = Color.RED;
+        clicked = false;
         repaint();
     }
 
@@ -55,7 +59,7 @@ public class Editeur extends JPanel implements MouseInputListener{
         if (selectedFigure == "Point") {
             figures.add(new Point(e.getX(), e.getY(), color));
         }
-        if (selectedFigure == "Segment") {
+        else if (selectedFigure == "Segment") {
             if (tmp_point == null) {
                 tmp_point = new Point(e.getX(), e.getY(), color);
                 tmp_figure = false;
@@ -65,7 +69,7 @@ public class Editeur extends JPanel implements MouseInputListener{
                 tmp_point = null;
             }
         }
-        if (selectedFigure == "Circle") {
+        else if (selectedFigure == "Circle") {
             if (tmp_point == null) {
                 tmp_point = new Point(e.getX(), e.getY(), color);
                 tmp_figure = false;
@@ -74,13 +78,22 @@ public class Editeur extends JPanel implements MouseInputListener{
                 tmp_point = null;
             }
         }
-        if (selectedFigure == "Polygon") {
+        else if (selectedFigure == "Polygon") {
             if (tmp_point == null) {
                 tmp_points.add(new Point(e.getX(), e.getY(), color));
             } else{
                 tmp_points.clear();
             }
         }
+        else if (selectedFigure == "Draw") {
+            if (clicked == false) {
+                figures.add(new Point(e.getX(), e.getY(), color));
+                clicked = true;
+            } else{
+                figures.add(new Point(e.getX(), e.getY(), color));
+                clicked = false;
+            }
+        }        
         repaint();
     }
 
@@ -90,11 +103,12 @@ public class Editeur extends JPanel implements MouseInputListener{
             if (e.getButton() == MouseEvent.BUTTON1) {
                 tmp_points.add(new Point(e.getX(), e.getY(), color));
             } 
-            if (e.getButton() == MouseEvent.BUTTON3) {
+            else if (e.getButton() == MouseEvent.BUTTON3) {
                 figures.add(new Polygon(tmp_points, color));
                 tmp_points = new LinkedList<Point>();
             }
         }
+
         repaint();
     }
 
@@ -114,7 +128,7 @@ public class Editeur extends JPanel implements MouseInputListener{
             tmp_figure = true;
         }
 
-        if (selectedFigure == "Circle" && tmp_point != null) {
+        else if (selectedFigure == "Circle" && tmp_point != null) {
             Point p2 = new Point(e.getX(), e.getY(), color);
             if (tmp_figure == true) {
                 figures.removeLast();
@@ -123,11 +137,15 @@ public class Editeur extends JPanel implements MouseInputListener{
             tmp_figure = true;
         }
         
-        if (selectedFigure == "Polygon" && tmp_points.size() != 0) {
+        else if (selectedFigure == "Polygon" && tmp_points.size() != 0) {
             tmp_points.remove(tmp_points.getLast());
-            tmp_points.add(new Point( e.getX(), e.getY(), color));
+            tmp_points.add(new Point(e.getX(), e.getY(), color));
             figures.add(new Polygon(tmp_points, color));
         }
+        else if (selectedFigure == "Draw" && clicked == true) {
+            figures.add(new Point(e.getX(), e.getY(), color));
+        }
+  
         repaint();
     }
 

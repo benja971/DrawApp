@@ -83,6 +83,6 @@ public class Point extends Figure {
 
 	public void paint(Graphics gc) {
 		gc.setColor(super.getColor());
-		gc.fillOval(x - 3, y - 3, 6, 6);		
+		gc.fillOval(x - 3, y - 3, 4, 4);		
 	}
 }
