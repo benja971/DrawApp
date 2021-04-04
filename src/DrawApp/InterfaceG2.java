@@ -1,5 +1,6 @@
 package DrawApp;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -148,7 +149,7 @@ public class InterfaceG2 extends JFrame implements ActionListener{
         toolBar1.add( btnPoint );
 
         btnLine = new JButton( new ImageIcon( "icons/line.png" ) );
-        btnLine.setToolTipText( "Line" );
+        btnLine.setToolTipText( "Segment" );
         btnLine.addActionListener(this);
         toolBar1.add( btnLine );
 
@@ -187,19 +188,83 @@ public class InterfaceG2 extends JFrame implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // TODO Auto-generated method stub
-        // Object source = e.getSource();
-        // String
-        // if () {
-        System.out.println("actionPerformed");
-        // }
-        // ed1 = new Editeur();
-        // ed1.setBackground(Color.red);
-        // add(ed1, BorderLayout.CENTER);
-    }
+        JButton source = (JButton) e.getSource();
+        String txt = source.getToolTipText();
+        
+        if (txt == "New File (CTRL+N)") {
+            ed1 = new Editeur();
+            add(ed1, BorderLayout.CENTER);
+            ed1.setBackground(Color.white);
+            ed1.addMouseListener(ed1);
+            ed1.addMouseMotionListener(ed1);
+            ed1.repaint();
+            repaint();
+            System.out.println("added editor");
+        }
+        else if (txt == "Save (CTRL+S)") {
+            
+        }
+        else if (txt == "Save As...") {
 
-    private void JMenuItemListener( ActionEvent event ) {
+        }
+        else if (txt == "Copy (CTRL+C)") {
+
+        }
+        else if (txt == "Cut (CTRL+X)") {
+
+        }
+        else if (txt == "Paste (CTRL+V)") {
+
+        }
+        else if (txt == "Exit (ALT+F4)" && ed1 != null) {
+            setVisible(false);
+            dispose();
+        }
+        else {
+            if (ed1 != null) {
+                ed1.setSelectedFigure(txt);
+            }
+        }
+    }
+    
+    private void JMenuItemListener( ActionEvent e ) {
         System.out.println("JMenuItemListener");
+        JMenuItem source = (JMenuItem) e.getSource();
+        String txt = source.getText();
+        
+        if (txt == "New File (CTRL+N)") {
+            ed1 = new Editeur();
+            add(ed1, BorderLayout.CENTER);
+            ed1.setBackground(Color.white);
+            ed1.addMouseListener(ed1);
+            ed1.addMouseMotionListener(ed1);
+            ed1.repaint();
+            System.out.println("added editor");
+        }
+        else if (txt == "Save (CTRL+S)") {
+    
+        }
+        else if (txt == "Save As...") {
+    
+        }
+        else if (txt == "Copy (CTRL+C)") {
+    
+        }
+        else if (txt == "Cut (CTRL+X)") {
+    
+        }
+        else if (txt == "Paste (CTRL+V)") {
+    
+        }
+        else if (txt == "Exit (ALT+F4)" && ed1 != null) {
+            setVisible(false);
+            dispose();
+        }
+        else {
+            if (ed1 != null) {
+                ed1.setSelectedFigure(txt);
+            }
+        }
     }
 
     private void JMenuListener( ActionEvent event ) {

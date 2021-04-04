@@ -29,6 +29,7 @@ public class Editeur extends JPanel implements MouseInputListener{
         clicked = false;
         selectedFigure = "Point";
         repaint();
+        System.out.println("editor created");
     }
     
     public Editeur(LinkedList<Figure> f){
@@ -56,6 +57,7 @@ public class Editeur extends JPanel implements MouseInputListener{
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        
         if (selectedFigure == "Point") {
             figures.add(new Point(e.getX(), e.getY(), color));
         }
