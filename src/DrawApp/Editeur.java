@@ -114,7 +114,6 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
         }
         
         else {
-            System.out.println("test for 2");
             for (Figure figure : figures) {
                 figure.setSelected(false);
             }

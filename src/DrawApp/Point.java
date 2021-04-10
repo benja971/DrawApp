@@ -87,6 +87,6 @@ public class Point extends Figure {
 	public void paint(Graphics gc, Boolean hovered) {
 		int size = (hovered || selected) ? 9 : 6;
 		gc.setColor(super.getColor());
-		gc.fillOval(x - 3, y - 3, size, size);		
+		gc.fillOval(x - size/2, y - size/2, size, size);		
 	}
 }
