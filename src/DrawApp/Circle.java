@@ -1,7 +1,9 @@
 package DrawApp;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
  
@@ -54,8 +56,11 @@ public class Circle extends Figure
 	}
 
 	public boolean equals(Object c2) {
+		if (!(c2 instanceof Circle)) {
+			return false;
+		}
 		Circle c = (Circle)c2;
-		return center.equals(c.center) && rayon == c.rayon;
+		return center.equals(c.getCenter()) && rayon == c.getRayon();
 	}
 
 	public Circle clone(){
@@ -67,10 +72,12 @@ public class Circle extends Figure
 		System.out.println(toString() + " has been exported");
 	}
 
-	public void paint(Graphics gc) {
-		gc.setColor(super.getColor());
-		center.paint(gc);
-		gc.drawOval(center.getX() - rayon/2, center.getY() - rayon/2, rayon, rayon);		
+	public void paint(Graphics gc, Boolean hovered) {
+		Graphics2D g2 = (Graphics2D)gc;
+		g2.setStroke(new BasicStroke((hovered || selected) ? 3 : 1));
+		g2.setColor(super.getColor());
+		center.paint(g2, false);
+		g2.drawOval(center.getX() - rayon/2, center.getY() - rayon/2, rayon, rayon);
 	}
 
 	public static long getSerialversionuid() {

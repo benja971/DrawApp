@@ -1,7 +1,9 @@
 package DrawApp;
+import java.awt.BasicStroke;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
@@ -63,6 +65,9 @@ public class Segment extends Figure
 	}
 
 	public boolean equals(Object s2) {
+		if (!(s2 instanceof Segment)) {
+			return false;
+		}		
 		Segment s = (Segment)s2;
 		return p1.equals(s.p1) && p2.equals(s.p2) || p1.equals(s.p2) && p2.equals(s.p1);
 	}
@@ -76,11 +81,14 @@ public class Segment extends Figure
 		System.out.println(toString() + " has been exported");
 	}
 
-	public void paint(Graphics gc) {
+	public void paint(Graphics gc, Boolean hovered) {
 		gc.setColor(super.getColor());
-		p1.paint(gc);
-		p2.paint(gc);
-		gc.drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+		Graphics2D g2 = (Graphics2D)gc;
+		p1.paint(g2, false);
+		p2.paint(g2, false);
+		g2.setStroke(new BasicStroke((hovered || selected) ? 3 : 1));
+		g2.setColor(super.getColor());
+		g2.drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
 	}
 
 }

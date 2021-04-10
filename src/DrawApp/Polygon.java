@@ -1,7 +1,9 @@
 package DrawApp;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
@@ -80,7 +82,10 @@ public class Polygon extends Figure
 		this.points = points;
 	}
 
-	public boolean equals(Object f) {
+	public boolean equals2(Object f) {
+		if (!(f instanceof Polygon)) {
+			return false;
+		}
         Polygon p2 = (Polygon)f;
         
         if(p2.points.size() != points.size()) {
@@ -119,18 +124,20 @@ public class Polygon extends Figure
         return false;
     }
 
-	public void paint(Graphics gc) {
+	public void paint(Graphics gc, Boolean hovered) {
 		gc.setColor(super.getColor());
+		Graphics2D g2 = (Graphics2D)gc;
+		g2.setStroke(new BasicStroke((hovered || selected) ? 3 : 1));
 		int x[]= new int[50], y[]= new int[50], i = 0;
-
+		
 		for (Point point : points) {
-			point.paint(gc);
+			point.paint(g2, false);
 			x[i] = point.getX();
 			y[i] = point.getY();
 			i++;
 		}
 		
-		gc.drawPolygon(x, y, points.size());
+		g2.drawPolygon(x, y, points.size());
 	}
 
 	public Boolean add(Point p) {
@@ -140,4 +147,23 @@ public class Polygon extends Figure
 		}
 		return false;
 	}
+
+	public boolean equals(Object f) {
+		if (!(f instanceof Polygon)) {
+			return false;
+		}
+        Polygon p2 = (Polygon)f;
+		int s1 = points.size();
+		int s2 = p2.getPoints().size();
+
+		if (s1 != s2)
+			return false;
+
+		for (int i = 0; i < points.size(); i++)
+			if (!points.get(i).equals(p2.getPoints().get(i)))
+				return false;
+
+		return true;
+	}
+	
 }

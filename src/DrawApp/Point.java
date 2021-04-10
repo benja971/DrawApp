@@ -68,6 +68,9 @@ public class Point extends Figure {
 	}
 
 	public boolean equals(Object p2) {
+		if (!(p2 instanceof Point)) {
+			return false;
+		}		
 		Point p = (Point)p2;
 		return p.x == x && p.y == y;
 	}
@@ -81,8 +84,9 @@ public class Point extends Figure {
 		System.out.println(toString() + " has been exported");
 	}
 
-	public void paint(Graphics gc) {
+	public void paint(Graphics gc, Boolean hovered) {
+		int size = (hovered || selected) ? 9 : 6;
 		gc.setColor(super.getColor());
-		gc.fillOval(x - 3, y - 3, 4, 4);		
+		gc.fillOval(x - 3, y - 3, size, size);		
 	}
 }

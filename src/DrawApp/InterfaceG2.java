@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
@@ -27,10 +28,11 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
     private Editeur editor;
     private JMenuBar menuBar;
     private JMenu mnuFile, mnuEdit, mnuHelp;
-    private JMenuItem mnuNewFile, mnuOpenFile, mnuSaveFile, mnuSaveFileAs, mnuExit, mnuUndo, mnuRedo, mnuCopy, mnuCut, mnuPaste;
+    private JMenuItem mnuNewFile, mnuOpenFile, mnuSaveFile, mnuSaveFileAs, mnuExit, mnuUndo, mnuRedo, mnuCopy, mnuCut, mnuPaste, mnuSaveFigures, mnuSaveFiguresAs;
     private JToolBar toolBar1;
-    private JButton btnNew, btnSave, btnSaveAs, btnCopy, btnCut, btnPaste, btnExit, btnPoint, btnLine, btnCircle, btnPolygon, btnDraw, btnColor, btnClear;
+    private JButton btnNew, btnSave, btnSaveAs, btnCopy, btnCut, btnPaste, btnExit, btnPoint, btnLine, btnCircle, btnPolygon, btnDraw, btnColor, btnClear, btnSelect;
     private JFileChooser fileChooser;
+    
 
     public InterfaceG2(String name) {
         setTitle(name);
@@ -67,6 +69,16 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
         mnuSaveFileAs = new JMenuItem( "Save File As ...", new ImageIcon( "icons/save_as.png" ) );
         mnuSaveFileAs.addActionListener(this::JMenuItemListener);
         mnuFile.add(mnuSaveFileAs);
+
+        mnuFile.addSeparator();
+
+        mnuSaveFiguresAs = new JMenuItem( "Save Figures As ...", new ImageIcon( "icons/export.png" ) );
+        mnuSaveFiguresAs.addActionListener(this::JMenuItemListener);
+        mnuFile.add(mnuSaveFiguresAs);
+
+        mnuSaveFigures = new JMenuItem( "Save Figures ...", new ImageIcon( "icons/export.png" ) );
+        mnuSaveFigures.addActionListener(this::JMenuItemListener);
+        mnuFile.add(mnuSaveFigures);
         
         mnuFile.addSeparator();
         
@@ -171,7 +183,7 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
         toolBar1.addSeparator();
 
         btnPoint = new JButton( new ImageIcon( "icons/dot.png") );
-        btnPoint.setToolTipText( "Dot" );
+        btnPoint.setToolTipText( "Point" );
         btnPoint.addActionListener(this);
         toolBar1.add( btnPoint );
 
@@ -196,12 +208,19 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
         toolBar1.add( btnDraw );
 
         toolBar1.addSeparator();
+
+        btnSelect = new JButton( new ImageIcon( "icons/draw.png") );
+        btnSelect.setToolTipText( "Select" );
+        btnSelect.addActionListener(this);
+        toolBar1.add( btnSelect );
+
+        toolBar1.addSeparator();
         
         btnColor = new JButton( new ImageIcon( "icons/color.png") );
         btnColor.setToolTipText( "Chose Color" );
         btnColor.addActionListener(this);
         toolBar1.add( btnColor );
-        
+
         toolBar1.addSeparator();
 
         btnClear = new JButton( new ImageIcon( "icons/clear.png") );
@@ -228,13 +247,11 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
             editor.repaint();
             this.validate();
         }
-        // System.out.println("added");
         else if (txt == "Save (CTRL+S)") {
-            
         }
         else if (txt == "Save As...") {
             System.out.println("Saving");
-            editor.export();
+            editor.save_img_as();
         }
         else if (txt == "Copy (CTRL+C)") {
             System.out.println("copy");
@@ -243,21 +260,21 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
 
         }
         else if (txt == "Paste (CTRL+V)") {
-
+            
         }
         else if (txt == "Exit (ALT+F4)" && editor != null) {
             setVisible(false);
             dispose();
         }
-        else if ((txt == "Point" || txt == "Segment" || txt == "Circle" || txt == "Polygon" || txt == "Draw") && editor != null){
+        else if ((txt == "Point" || txt == "Segment" || txt == "Circle" || txt == "Polygon" || txt == "Draw" || txt == "Select") && editor != null){
             editor.setSelectedFigure(txt);
         }
 
         else if (txt == "Chose Color" && editor != null){  
             Color c = JColorChooser.showDialog(this,"Select a color",editor.getInitialcolor());
             editor.setColor(c);
-        }  
-        else if(txt == "Clear The Whole Page") {
+        }
+        else if(txt == "Clear The Whole Page" && editor != null) {
             editor.setBackground(Color.white);
             editor.setFigures(new LinkedList<Figure>());
             editor.repaint();
@@ -265,7 +282,6 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
     }
     
     private void JMenuItemListener( ActionEvent e ) {
-        System.out.println("JMenuItemListener");
         JMenuItem source = (JMenuItem) e.getSource();
         String txt = source.getText();
         
@@ -284,34 +300,34 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
             fileChooser.setFileFilter(new FileNameExtensionFilter("JPG & GIF Images", "jpg", "gif"));
             int returnVal = fileChooser.showOpenDialog(this);
             if(returnVal == JFileChooser.APPROVE_OPTION) {
-                String path = fileChooser.getSelectedFile().getAbsolutePath();
+                File path = fileChooser.getSelectedFile();
                 if (editor != null) {
-                editor.setPath(path);
+                editor.setPath_img(path);
                 editor.setImage();
                 }
             }
         }
 
         else if (txt == "Save File ...") {
-    
+            if (editor.getPath_img() != null) {
+                editor.save_img();
+            }
+            else {
+                editor.save_img_as();
+            }
         }
         else if (txt == "Save File As ...") {
-            
+            editor.save_img_as();
         }
         else if (txt == "Undo") {
-
         }
         else if (txt == "Redo") {
-
         }
         else if (txt == "Copy") {
-    
         }
         else if (txt == "Cut") {
-    
         }
         else if (txt == "Paste") {
-    
         }
         else if (txt == "Exit") {
             setVisible(false);
@@ -347,5 +363,4 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
         // TODO Auto-generated method stub
         
     }
-
 }

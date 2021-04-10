@@ -11,6 +11,7 @@ public abstract class Figure implements Cloneable, Serializable{
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private Color color;
+	protected Boolean selected = false;
 
 	public Figure(String n, Color c){
 		name = n;
@@ -43,13 +44,21 @@ public abstract class Figure implements Cloneable, Serializable{
 	
 	public abstract void export(ObjectOutputStream out) throws IOException;
 
-	public abstract void paint(Graphics g);
+	public abstract void paint(Graphics g, Boolean hovered);
 
 	public Color getColor() {
 		return color;
 	}
-
 	public void setColor(Color color) {
 		this.color = color;
 	}
+
+	public Boolean getSelected() {
+		return selected;
+	}
+
+	public void setSelected(Boolean selected) {
+		this.selected = selected;
+	}
+	
 }
