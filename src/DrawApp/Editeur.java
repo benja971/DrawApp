@@ -20,16 +20,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputListener;
+import javax.swing.plaf.ColorUIResource;
 
 public class Editeur extends JPanel implements ActionListener, MouseInputListener{
 
 	private static final long serialVersionUID = 1L;
-	private LinkedList<Figure> figures;
+	private LinkedList<Figure> figures, copys;
     private String selectedFigure;
-    private Figure hoveredFigure;
-    private Point hoveredPoint;
+    private Figure hoveredFigure, tmpFigure;
+    private Point hoveredPoint, tmp_point, mouse_point;
     private LinkedList<Point> tmp_points;
-    private Point tmp_point;
     private Boolean tmp_figure;
     private Color initialcolor;
     private Color color;
@@ -40,9 +40,12 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
     private JMenuItem copy, cut, paste, undo, redo, translate;
     private BufferedImage bufferedImg;
     private JFileChooser filechooser;
+    private int polygon_size;
+
 
     public Editeur(){
         figures = new LinkedList<Figure>();
+        copys = new LinkedList<Figure>();
         tmp_points = new LinkedList<Point>();
         initialcolor = Color.RED;
         rightclickmenu = new JPopupMenu();
@@ -67,9 +70,9 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
         rightclickmenu.add(undo);
         rightclickmenu.add(redo);
         filechooser = new JFileChooser();
-		filechooser.setApproveButtonText("Exporter");        
+		filechooser.setApproveButtonText("Export");        
         repaint();
-    }
+    } 
     
     public Editeur(LinkedList<Figure> f){
         figures = f;
@@ -80,6 +83,12 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
 
     public void paint(Graphics gc) { 
         super.paint(gc);
+        if (tmpFigure != null) {
+            tmpFigure.paint(gc, tmpFigure.equals(hoveredFigure));
+        }
+        if (mouse_point != null) {
+            mouse_point.paint(gc, mouse_point.equals(hoveredFigure));
+        }
         for (Figure figure : figures) {
             figure.paint(gc, figure.equals(hoveredFigure));
         }
@@ -104,9 +113,7 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
             if (hoveredFigure != null) {
                 hoveredFigure.setSelected(true);
             }
-
             else {
-                
                 for (Figure figure : figures) {
                     figure.setSelected(false);
                 }
@@ -117,59 +124,71 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
             for (Figure figure : figures) {
                 figure.setSelected(false);
             }
-
+            
             if (selectedFigure == "Point") {
-                figures.add(new Point(e.getX(), e.getY(), color));
+                figures.add(new Point(e.getX(), e.getY(), new ColorUIResource(color == null ? Color.black : color), false));
             }
             else if (selectedFigure == "Segment") {
                 if (tmp_point == null) {
-                    tmp_point = new Point(e.getX(), e.getY(), color);
-                    tmp_figure = false;
-                    
-                } else{
-                    figures.add(new Segment(tmp_point, new Point(e.getX(), e.getY(), color), color));
+                    tmp_point = mouse_point;
+                }
+                else {
+                    figures.add(new Segment(tmp_point, mouse_point, color == null ? Color.black : color, false));
                     tmp_point = null;
+                    tmpFigure = null;
                 }
             }
             else if (selectedFigure == "Circle") {
                 if (tmp_point == null) {
-                    tmp_point = new Point(e.getX(), e.getY(), color);
-                    tmp_figure = false;
-                } else{
-                    figures.add(new Circle(tmp_point, new Point(e.getX(), e.getY(), color), color));
+                    tmp_point = mouse_point;
+                }
+                else {
+                    figures.add(new Circle(tmp_point, mouse_point, color == null ? Color.black : color, false));
                     tmp_point = null;
+                    tmpFigure = null;
                 }
             }
             else if (selectedFigure == "Polygon") {
-                if (tmp_point == null) {
-                    tmp_points.add(new Point(e.getX(), e.getY(), color));
-                } else{
-                    tmp_points.clear();
-                }
+
             }
-            else if (selectedFigure == "Draw") {
-                figures.add(new Point(e.getX(), e.getY(), color));
-            }
+
+            repaint();
         }
-        
-        repaint();
+            
+        System.out.println(figures);
     }
 
     @Override
+    public void mouseMoved(MouseEvent e) {
+        if (selectedFigure == "Select") {
+            hover_point(e.getX(), e.getY());
+        }
+        else if (selectedFigure == "Point" || selectedFigure == "Segment" || selectedFigure == "Circle" || selectedFigure == "Polygon" || selectedFigure == "Draw"){
+            mouse_point = new Point(e.getX(), e.getY(), new ColorUIResource(color == null ? Color.black : color), true);
+            if (selectedFigure == "Segment") {
+                if (tmp_point != null) {
+                    tmpFigure = new Segment(tmp_point, mouse_point, color == null ? Color.black : color, true);
+                }
+            }
+            else if (selectedFigure == "Circle") {
+                if (tmp_point != null) {
+                    tmpFigure = new Circle(tmp_point, mouse_point, color == null ? Color.black : color, true);
+                }
+            }
+            else if (selectedFigure == "Polygon") {
+                
+            }
+
+        }
+        repaint();
+    }
+    
+    @Override
     public void mousePressed(MouseEvent e) {
         if (selectedFigure == "Translate") {
-            hoveredPoint = new Point(e.getX(), e.getY(), Color.BLACK);
+            hoveredPoint = new Point(e.getX(), e.getY(), Color.black, true);
         }
 
-        else if (selectedFigure == "Polygon") {
-            if (e.getButton() == MouseEvent.BUTTON1) {
-                tmp_points.add(new Point(e.getX(), e.getY(), color));
-            } 
-            else if (e.getButton() == MouseEvent.BUTTON3) {
-                figures.add(new Polygon(tmp_points, color));
-                tmp_points = new LinkedList<Point>();
-            }
-        }
         repaint();
     }
 
@@ -179,7 +198,7 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
     }
     
     public void hover_point(int m_x, int m_y) {
-        Point mouse = new Point(m_x - 3, m_y - 3, Color.black);
+        Point mouse = new Point(m_x - 3, m_y - 3, Color.black, true);
         hoveredFigure = null;
 
         for (Figure figure : figures) {
@@ -215,34 +234,6 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
         }
     }
 
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        if (selectedFigure == "Select") {
-            hover_point(e.getX(), e.getY());
-        }
-        else if (selectedFigure == "Segment" && tmp_point != null) {
-            Point p2 = new Point("A", e.getX(), e.getY(), color);
-            if (tmp_figure == true) {
-               figures.removeLast();
-            }
-            figures.add(new Segment(tmp_point, p2, color));
-            tmp_figure = true;
-        }
-        else if (selectedFigure == "Circle" && tmp_point != null) {
-            Point p2 = new Point(e.getX(), e.getY(), color);
-            if (tmp_figure == true) {
-                figures.removeLast();
-            }
-            figures.add(new Circle(tmp_point, p2, color));
-            tmp_figure = true;
-        }
-        else if (selectedFigure == "Polygon" && tmp_points.size() != 0) {
-            tmp_points.remove(tmp_points.getLast());
-            tmp_points.add(new Point(e.getX(), e.getY(), color));
-            figures.add(new Polygon(tmp_points, color));
-        }
-        repaint();
-    }
 
     @Override
     public Cursor getCursor() {
@@ -265,7 +256,7 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
 
     @Override
     public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
+        tmpFigure = null;
         
     }
 
@@ -283,7 +274,8 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
         }
 
         else if (selectedFigure == "Draw") {
-            figures.add(new Point(e.getX(), e.getY(), color));
+            mouse_point = new Point(e.getX(), e.getY(), new ColorUIResource(color == null ? Color.black : color), true);
+            figures.add(mouse_point);
         }
 
         repaint();
@@ -365,7 +357,7 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
 				ImageIO.write(bufferedImg, "JPG", filechooser.getSelectedFile());
                 
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, "Création du fichier impossible", null, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Cannot create file", null, JOptionPane.ERROR_MESSAGE);
 			} 
 		}
     }
@@ -377,7 +369,7 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
         try {
             ImageIO.write(bufferedImg, "JPG", path_img);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Création du fichier impossible", null, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Cannot create file", null, JOptionPane.ERROR_MESSAGE);
         } 
     }
 
@@ -401,9 +393,41 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
     public void actionPerformed(ActionEvent e) {
         JMenuItem source = (JMenuItem) e.getSource();
         String txt = source.getText();
-        System.out.println(txt);
         if (txt == "Translate") {
             selectedFigure = txt;
         }
     }
+
+    public Figure getHoveredFigure() {
+        return hoveredFigure;
+    }
+
+    public void setHoveredFigure(Figure hoveredFigure) {
+        this.hoveredFigure = hoveredFigure;
+    }
+
+    public Point getHoveredPoint() {
+        return hoveredPoint;
+    }
+
+    public void setHoveredPoint(Point hoveredPoint) {
+        this.hoveredPoint = hoveredPoint;
+    }
+
+    public LinkedList<Figure> getCopys() {
+        return copys;
+    }
+
+    public void setCopys(LinkedList<Figure> copys) {
+        this.copys = copys;
+    }
+
+    public int getPolygon_size() {
+        return polygon_size;
+    }
+
+    public void setPolygon_size(int polygon_size) {
+        this.polygon_size = polygon_size;
+    }
+    
 }

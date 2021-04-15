@@ -12,20 +12,20 @@ public class Point extends Figure {
 	private int x;
 	private int y;
 	
-	public Point(String n, int x, int y, Color c){
-		super(n, c);
+	public Point(String n, int x, int y, Color c, Boolean tmp){
+		super(n, c, tmp);
 		this.x = x;
 		this.y = y;
 	}
 
-	public Point(int x, int y, Color c){
-		super("Point", c);
+	public Point(int x, int y, Color c, Boolean tmp){
+		super("Point", c, tmp);
 		this.x = x;
 		this.y = y;
 	}
 
 	public Point(Point p) {
-		super(p.getName(), p.getColor());
+		super(p.getName(), p.getColor(), p.getTmp());
 		this.x = p.getX();
 		this.y = p.getY();
 	}
@@ -86,6 +86,7 @@ public class Point extends Figure {
 
 	public void paint(Graphics gc, Boolean hovered) {
 		int size = (hovered || selected) ? 9 : 6;
+		// System.out.println(super.getColor());
 		gc.setColor(super.getColor());
 		gc.fillOval(x - size/2, y - size/2, size, size);		
 	}

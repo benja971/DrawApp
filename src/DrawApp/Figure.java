@@ -11,11 +11,13 @@ public abstract class Figure implements Cloneable, Serializable{
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private Color color;
+	private Boolean tmp;
 	protected Boolean selected = false;
 
-	public Figure(String n, Color c){
+	public Figure(String n, Color c, Boolean tmp){
 		name = n;
 		color = c;
+		this.tmp = tmp;
 	}
 
 	public String getName() {
@@ -59,6 +61,14 @@ public abstract class Figure implements Cloneable, Serializable{
 
 	public void setSelected(Boolean selected) {
 		this.selected = selected;
+	}
+
+	public Boolean getTmp() {
+		return tmp;
+	}
+
+	public void setTmp(Boolean tmp) {
+		this.tmp = tmp;
 	}
 	
 }
