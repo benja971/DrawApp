@@ -13,20 +13,20 @@ public class Circle extends Figure
 	private Point center;
 	private int rayon;
 
-	public Circle(String n, Point center, int rayon, Color c, Boolean tmp) {
-		super(n, c, tmp);
+	public Circle(String n, Point center, int rayon, Color c) {
+		super(n, c);
 		this.center = center;
 		this.rayon = rayon;
 	}
 
-	public Circle(Point p1, Point p2, Color c, Boolean tmp){
-		super("C" + p1.getName() + p2.getName(), c, tmp);
+	public Circle(Point p1, Point p2, Color c){
+		super("C" + p1.getName() + p2.getName(), c);
 		this.center = p1;
 		this.rayon = (int)center.getDistance(p2) * 2;
 	}
 
 	public Circle(Circle c){
-		super(c.getName(), c.getColor(), c.getTmp());
+		super(c.getName(), c.getColor());
 		this.center = c.getCenter();
 		this.rayon = c.getRayon();
 	}

@@ -13,20 +13,20 @@ public class Segment extends Figure
 	private Point p1;
 	private Point p2;
 
-	public Segment(String n, Point p1, Point p2, Color c, Boolean tmp){
-		super(n, c, tmp);
+	public Segment(String n, Point p1, Point p2, Color c){
+		super(n, c);
 		this.p1 = p1;
 		this.p2 = p2;
 	}
 
-	public Segment(Point p1, Point p2, Color c, Boolean tmp){
-		super(p1.getName() + p2.getName(), c, tmp);
+	public Segment(Point p1, Point p2, Color c){
+		super(p1.getName() + p2.getName(), c);
 		this.p1 = p1;
 		this.p2 = p2;
 	}
 
 	public Segment(Segment s) {
-		super(s.getName(), s.getColor(), s.getTmp());
+		super(s.getName(), s.getColor());
 		this.p1 = s.getP1();
 		this.p2 = s.getP2();
 	}
@@ -57,7 +57,7 @@ public class Segment extends Figure
 	}
 
 	public Point getCenter(){
-		return new Point(p1.getName() + p2.getName() , (p1.getX() + p2.getX())/2, (p1.getY() + p2.getY())/2, getColor(), super.getTmp());
+		return new Point(p1.getName() + p2.getName() , (p1.getX() + p2.getX())/2, (p1.getY() + p2.getY())/2, getColor());
 	}
 
 	public double calculDistance(){

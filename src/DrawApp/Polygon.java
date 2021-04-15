@@ -13,18 +13,18 @@ public class Polygon extends Figure
 	private static final long serialVersionUID = 1L;
     private LinkedList<Point> points;
      
-	public Polygon(String n, LinkedList<Point> points, Color c, Boolean tmp) {
-		super(n, c, tmp);
+	public Polygon(String n, LinkedList<Point> points, Color c) {
+		super(n, c);
 		this.points = points;
 	}
 
-	public Polygon(LinkedList<Point> points, Color c, Boolean tmp) {
-		super("Poly", c, tmp);
+	public Polygon(LinkedList<Point> points, Color c) {
+		super("Poly", c);
 		this.points = points;
 	}
 
-	public Polygon(String n, Point[] pts, int nbr, Color c, Boolean tmp) {
-		super(n, c, tmp);
+	public Polygon(String n, Point[] pts, int nbr, Color c) {
+		super(n, c);
 		points = new LinkedList<Point>();
 		
 		for (int i = 0; i < nbr; i++) {
@@ -33,7 +33,7 @@ public class Polygon extends Figure
 	}
 
 	public Polygon(Polygon p) {
-		super(p.getName(), p.getColor(), p.getTmp());
+		super(p.getName(), p.getColor());
 		this.points = p.getPoints();
 	}
 
@@ -56,7 +56,7 @@ public class Polygon extends Figure
         x /= points.size();
         y /= points.size();
 
-		return new Point(n, x, y, getColor(), super.getTmp());
+		return new Point(n, x, y, getColor());
 	}
 
 	public void translate(int tx, int ty) {
@@ -130,13 +130,14 @@ public class Polygon extends Figure
 		g2.setStroke(new BasicStroke((hovered || selected) ? 3 : 1));
 		int x[]= new int[100], y[]= new int[100], i = 0;
 		
+		System.out.println(points);
 		for (Point point : points) {
+			System.out.println(point);
 			point.paint(g2, false);
 			x[i] = point.getX();
 			y[i] = point.getY();
 			i++;
 		}
-		
 		g2.drawPolygon(x, y, points.size());
 	}
 

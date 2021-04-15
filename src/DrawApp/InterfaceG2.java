@@ -2,6 +2,7 @@ package DrawApp;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -14,13 +15,17 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.DimensionUIResource;
 
 public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
 
@@ -31,9 +36,11 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
     private JMenu mnuFile, mnuEdit, mnuHelp;
     private JMenuItem mnuNewFile, mnuOpenFile, mnuSaveFile, mnuSaveFileAs, mnuExit, mnuUndo, mnuRedo, mnuCopy, mnuCut, mnuPaste;
     private JToolBar toolBar1;
-    private JButton btnNew, btnSave, btnSaveAs, btnCopy, btnCut, btnPaste, btnExit, btnPoint, btnLine, btnCircle, btnPolygon, btnDraw, btnColor, btnClear, btnSelect;
+    private JButton btnNew, btnSave, btnSaveAs, btnCopy, btnCut, btnPaste, btnExit, btnPoint, btnLine, btnCircle, btnPolygon, btnDraw, btnColor, btnClear, btnSelect, btnValidate;
     private JFileChooser fileChooser;
-    private PolygonPanel polygonPanel;
+    private JSpinner nbr_sides_field;
+    private JLabel explications;
+    private JPanel PolygonPanel;
 
     public InterfaceG2(String name) {
         setTitle(name);
@@ -221,8 +228,23 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
 
         add(toolBar1, BorderLayout.NORTH);
 
-        polygonPanel = new PolygonPanel();
+        SpinnerNumberModel model1 = new SpinnerNumberModel(3, 3, 30, 1);  
+        nbr_sides_field = new JSpinner(model1);
+        nbr_sides_field.setPreferredSize(new DimensionUIResource(60, 20));
 
+        btnValidate = new JButton("Validate");
+        btnValidate.setToolTipText("Validate");
+        btnValidate.addActionListener(this);
+
+        String expl = "How many vertices (sommets):" ;
+        explications = new JLabel(expl);
+
+        PolygonPanel = new JPanel();
+        PolygonPanel.setLayout(new GridLayout(12, 1));
+        PolygonPanel.add(explications, BorderLayout.NORTH);
+        PolygonPanel.add(nbr_sides_field, BorderLayout.WEST);
+        PolygonPanel.add(btnValidate, BorderLayout.EAST);
+        
 // ------------------------------------------------------------------------------------------------
     }
 
@@ -290,27 +312,27 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
             for (Figure figure : editor.getCopys()) {
                 if (figure instanceof Point) {
                     Point p = (Point) figure;
-                    editor.getFigures().add(new Point(p.getX() + 10, p.getY() + 10 , Color.black, false));
+                    editor.getFigures().add(new Point(p.getX() + 10, p.getY() + 10 , Color.black));
                     editor.repaint();
                 }
                 else if (figure instanceof Segment) {
                     Segment s = (Segment) figure;
-                    editor.getFigures().add(new Segment(new Point(s.getP1().getX()+10, s.getP1().getY()+10, Color.black, false), new Point(s.getP2().getX()+10, s.getP2().getY()+10, Color.black, false), Color.black, false));
+                    editor.getFigures().add(new Segment(new Point(s.getP1().getX()+10, s.getP1().getY()+10, Color.black), new Point(s.getP2().getX()+10, s.getP2().getY()+10, Color.black), Color.black));
                     editor.repaint();
                 }
                 else if (figure instanceof Circle) {
                     Circle c = (Circle) figure;
-                    editor.getFigures().add(new Circle(c.getName(), new Point(c.getCenter().getX()+10, c.getCenter().getY()+10, Color.black, false), c.getRayon(), Color.black, false));
+                    editor.getFigures().add(new Circle(c.getName(), new Point(c.getCenter().getX()+10, c.getCenter().getY()+10, Color.black), c.getRayon(), Color.black));
                     editor.repaint();
                 }
                 else if (figure instanceof Polygon) {
                     Polygon p = (Polygon) figure;
                     LinkedList<Point> l = new LinkedList<Point>();
                     for (Point point : p.getPoints()){
-                        Point tmp = new Point(point.getX()+10, point.getY()+10, Color.black, false);
+                        Point tmp = new Point(point.getX()+10, point.getY()+10, Color.black);
                         l.add(tmp);
                     }
-                    editor.getFigures().add(new Polygon(l, Color.black, false));
+                    editor.getFigures().add(new Polygon(l, Color.black));
                     editor.repaint();
                 }
             }            
@@ -322,9 +344,17 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
         else if ((txt == "Point" || txt == "Segment" || txt == "Circle" || txt == "Polygon" || txt == "Draw" || txt == "Select") && editor != null){
             editor.setSelectedFigure(txt);
             if (txt == "Polygon") {
-                add(polygonPanel, BorderLayout.WEST);
+                add(PolygonPanel, BorderLayout.WEST);
                 validate();
+            }
+            else if (txt != "Polygon") {
+                remove(PolygonPanel);
+                validate();
+            }
         }
+
+        else if (txt == "Validate") {
+            editor.setPolygon_size((int) nbr_sides_field.getValue());
         }
 
         else if (txt == "Chose Color" && editor != null){  
@@ -334,6 +364,9 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
         else if(txt == "Clear The Whole Page" && editor != null) {
             editor.setBackground(Color.white);
             editor.setFigures(new LinkedList<Figure>());
+            editor.setTmp_point(null);
+            editor.setTmp_points(new LinkedList<Point>());
+            editor.setTmpFigure(null);
             editor.repaint();
         }   
     }

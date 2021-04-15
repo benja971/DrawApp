@@ -40,7 +40,7 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
     private JMenuItem copy, cut, paste, undo, redo, translate;
     private BufferedImage bufferedImg;
     private JFileChooser filechooser;
-    private int polygon_size;
+    private int polygon_size, count;
 
 
     public Editeur(){
@@ -106,10 +106,19 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
             selectedFigure = null;
+            mouse_point = null;
+            tmpFigure = null;
+            tmp_point = null;
+            tmp_points = new LinkedList<Point>();
             rightclickmenu.show(this, e.getX(), e.getY());
         }
         
         else if (selectedFigure == "Select") {
+            selectedFigure = null;
+            mouse_point = null;
+            tmpFigure = null;
+            tmp_point = null;
+            tmp_points = new LinkedList<Point>();
             if (hoveredFigure != null) {
                 hoveredFigure.setSelected(true);
             }
@@ -126,14 +135,14 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
             }
             
             if (selectedFigure == "Point") {
-                figures.add(new Point(e.getX(), e.getY(), new ColorUIResource(color == null ? Color.black : color), false));
+                figures.add(new Point(e.getX(), e.getY(), new ColorUIResource(color == null ? Color.black : color)));
             }
             else if (selectedFigure == "Segment") {
                 if (tmp_point == null) {
                     tmp_point = mouse_point;
                 }
                 else {
-                    figures.add(new Segment(tmp_point, mouse_point, color == null ? Color.black : color, false));
+                    figures.add(new Segment(tmp_point, mouse_point, new ColorUIResource(color == null ? Color.black : color)));
                     tmp_point = null;
                     tmpFigure = null;
                 }
@@ -143,18 +152,30 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
                     tmp_point = mouse_point;
                 }
                 else {
-                    figures.add(new Circle(tmp_point, mouse_point, color == null ? Color.black : color, false));
+                    figures.add(new Circle(tmp_point, mouse_point, new ColorUIResource(color == null ? Color.black : color)));
                     tmp_point = null;
                     tmpFigure = null;
                 }
             }
             else if (selectedFigure == "Polygon") {
-
+                if (polygon_size == 0) {
+                    JOptionPane.showMessageDialog(null, "Your must chose a size for your polygon first !", null, JOptionPane.ERROR_MESSAGE);
+                }
+                else if (count < polygon_size - 1){
+                    tmp_points.add(mouse_point);
+                    count ++;
+                    
+                }
+                else {
+                    tmp_points.add(mouse_point);
+                    figures.add(new Polygon((LinkedList<Point>) tmp_points.clone(), new ColorUIResource(color == null ? Color.black : color)));
+                    tmp_points.clear();
+                    tmpFigure = null;
+                    count = 0;
+                }
             }
-
             repaint();
         }
-            
         System.out.println(figures);
     }
 
@@ -164,19 +185,23 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
             hover_point(e.getX(), e.getY());
         }
         else if (selectedFigure == "Point" || selectedFigure == "Segment" || selectedFigure == "Circle" || selectedFigure == "Polygon" || selectedFigure == "Draw"){
-            mouse_point = new Point(e.getX(), e.getY(), new ColorUIResource(color == null ? Color.black : color), true);
+            mouse_point = new Point(e.getX(), e.getY(), new ColorUIResource(color == null ? Color.black : color));
             if (selectedFigure == "Segment") {
                 if (tmp_point != null) {
-                    tmpFigure = new Segment(tmp_point, mouse_point, color == null ? Color.black : color, true);
+                    tmpFigure = new Segment(tmp_point, mouse_point, color == null ? Color.black : color);
                 }
             }
             else if (selectedFigure == "Circle") {
                 if (tmp_point != null) {
-                    tmpFigure = new Circle(tmp_point, mouse_point, color == null ? Color.black : color, true);
+                    tmpFigure = new Circle(tmp_point, mouse_point, color == null ? Color.black : color);
                 }
             }
             else if (selectedFigure == "Polygon") {
-                
+                tmp_points.add(mouse_point);
+                System.out.println(tmp_points);
+                tmpFigure = new Polygon((LinkedList<Point>) tmp_points.clone(), new ColorUIResource(color == null ? Color.black : color));
+                System.out.println(tmpFigure);
+                tmp_points.removeLast();
             }
 
         }
@@ -186,7 +211,7 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
     @Override
     public void mousePressed(MouseEvent e) {
         if (selectedFigure == "Translate") {
-            hoveredPoint = new Point(e.getX(), e.getY(), Color.black, true);
+            hoveredPoint = new Point(e.getX(), e.getY(), Color.black);
         }
 
         repaint();
@@ -198,7 +223,7 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
     }
     
     public void hover_point(int m_x, int m_y) {
-        Point mouse = new Point(m_x - 3, m_y - 3, Color.black, true);
+        Point mouse = new Point(m_x - 3, m_y - 3, Color.black);
         hoveredFigure = null;
 
         for (Figure figure : figures) {
@@ -274,7 +299,7 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
         }
 
         else if (selectedFigure == "Draw") {
-            mouse_point = new Point(e.getX(), e.getY(), new ColorUIResource(color == null ? Color.black : color), true);
+            mouse_point = new Point(e.getX(), e.getY(), new ColorUIResource(color == null ? Color.black : color));
             figures.add(mouse_point);
         }
 
@@ -428,6 +453,14 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
 
     public void setPolygon_size(int polygon_size) {
         this.polygon_size = polygon_size;
+    }
+
+    public Figure getTmpFigure() {
+        return tmpFigure;
+    }
+
+    public void setTmpFigure(Figure tmpFigure) {
+        this.tmpFigure = tmpFigure;
     }
     
 }
