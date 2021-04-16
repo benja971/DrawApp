@@ -281,43 +281,33 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
                 }
             }
             System.out.println(editor.getCopys());
+            editor.repaint();
         }
         else if (txt == "Cut (CTRL+X)") {
             System.out.println("cut");
             editor.getCopys().clear();
-            LinkedList<Figure> l = new LinkedList<Figure>();
-            System.out.println(editor.getFigures());
+           
             for (Figure figure : editor.getFigures()) {
-                l.add(figure.clone());
-            }
-            // for (int i = 0; i < editor.getFigures().size(); i++) {
-            //     if (editor.getFigures().get(i).getSelected()) {
-            //         System.out.println("selected");
-            //         editor.getCopys().add(editor.getFigures().get(i));
-            //         System.out.println("added");
-            //         System.out.println(l);
-            //         if (l.remove(l.get(i))) {
-            //             System.out.println("removed");
-            //             System.out.println(l);
-            //         }
-                    
-            //     }                
-            // }
-            // editor.setFigures(l);
-            // editor.repaint();
-        }
-        else if (txt == "Paste (CTRL+V)") {
-            System.out.println("paste");
-            System.out.println(editor.getCopys());
-            for (Figure figure : editor.getCopys()) {
-                if (figure instanceof Point) {
-                    Point p = (Point) figure;
-                    editor.getFigures().add(new Point(p.getX() + 10, p.getY() + 10 , Color.black));
-                    editor.repaint();
+                if (figure.getSelected()) {
+                    editor.getCopys().add(figure.clone());
+                    editor.getFigures().remove(figure);
                 }
-                else if (figure instanceof Segment) {
-                    Segment s = (Segment) figure;
-                    editor.getFigures().add(new Segment(new Point(s.getP1().getX()+10, s.getP1().getY()+10, Color.black), new Point(s.getP2().getX()+10, s.getP2().getY()+10, Color.black), Color.black));
+            }
+            editor.repaint();
+        }
+            
+            else if (txt == "Paste (CTRL+V)") {
+                System.out.println("paste");
+                System.out.println(editor.getCopys());
+                for (Figure figure : editor.getCopys()) {
+                    if (figure instanceof Point) {
+                        Point p = (Point) figure;
+                        editor.getFigures().add(new Point(p.getX() + 10, p.getY() + 10 , Color.black));
+                        editor.repaint();
+                    }
+                    else if (figure instanceof Segment) {
+                        Segment s = (Segment) figure;
+                        editor.getFigures().add(new Segment(new Point(s.getP1().getX()+10, s.getP1().getY()+10, Color.black), new Point(s.getP2().getX()+10, s.getP2().getY()+10, Color.black), Color.black));
                     editor.repaint();
                 }
                 else if (figure instanceof Circle) {
