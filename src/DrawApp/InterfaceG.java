@@ -1,4 +1,3 @@
-package DrawApp;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JToolBar;
@@ -27,7 +27,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.DimensionUIResource;
 
-public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
+public class InterfaceG extends JFrame implements ActionListener, KeyListener{
 
     private static final long serialVersionUID = 1L;
     private Dimension dimension;
@@ -42,13 +42,12 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
     private JLabel explications;
     private JPanel PolygonPanel;
 
-    public InterfaceG2(String name) {
+    public InterfaceG(String name) {
         setTitle(name);
         dimension = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         setSize((int)(dimension.getWidth()/1.25), (int)(dimension.getHeight()/1.25));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        
         menuBar = new JMenuBar();
         
 // ------------------------------------------------------------------------------------------------
@@ -90,7 +89,7 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
 
         mnuEdit = new JMenu( "Edit" );
 
-        mnuUndo = new JMenuItem( "Undo", new ImageIcon( "icons/undo.png" ) );
+        mnuUndo = new JMenuItem( "Undo", new ImageIcon( "./icons/undo.png" ) );
         mnuUndo.addActionListener(this::JMenuItemListener);
         mnuUndo.setMnemonic(KeyEvent.VK_Z);
         mnuUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));        
@@ -207,7 +206,7 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
 
         toolBar1.addSeparator();
 
-        btnSelect = new JButton( new ImageIcon( "icons/draw.png") );
+        btnSelect = new JButton( new ImageIcon( "icons/selection.png") );
         btnSelect.setToolTipText( "Select" );
         btnSelect.addActionListener(this);
         toolBar1.add( btnSelect );
@@ -248,89 +247,126 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
 // ------------------------------------------------------------------------------------------------
     }
 
+    public void addEditor() {
+        editor = new Editeur();
+        add(editor, BorderLayout.CENTER);
+        editor.setBackground(Color.white);
+        editor.addMouseListener(editor);
+        editor.addMouseMotionListener(editor);
+        editor.repaint();
+        validate();
+    }
+
+    public void copy() {
+        for (Figure figure : editor.getFigures()) {
+            if (figure.getSelected()) {
+                editor.getCopys().add(figure.clone());
+            }
+        }
+        editor.repaint();        
+    }
+
+    public void cut() {
+        editor.getCopys().clear();
+        for (Figure figure : editor.getFigures()) {
+            if (figure.getSelected()) {
+                editor.getCopys().add(figure.clone());
+                editor.getFigures().remove(figure);
+            }
+        }
+        editor.repaint();        
+    }
+
+    public void paste() {
+        for (Figure figure : editor.getCopys()) {
+            if (figure instanceof Point) {
+                Point p = (Point) figure;
+                editor.getFigures().add(new Point(p.getX() + 10, p.getY() + 10 , Color.black));
+                editor.repaint();
+            }
+            else if (figure instanceof Segment) {
+                Segment s = (Segment) figure;
+                editor.getFigures().add(new Segment(new Point(s.getP1().getX()+10, s.getP1().getY()+10, Color.black), new Point(s.getP2().getX()+10, s.getP2().getY()+10, Color.black), Color.black));
+            editor.repaint();
+            }
+            else if (figure instanceof Circle) {
+                Circle c = (Circle) figure;
+                editor.getFigures().add(new Circle(c.getName(), new Point(c.getCenter().getX()+10, c.getCenter().getY()+10, Color.black), c.getRayon(), Color.black));
+                editor.repaint();
+            }
+            else if (figure instanceof Polygon) {
+                Polygon p = (Polygon) figure;
+                LinkedList<Point> l = new LinkedList<Point>();
+                for (Point point : p.getPoints()){
+                    Point tmp = new Point(point.getX()+10, point.getY()+10, Color.black);
+                    l.add(tmp);
+                }
+                editor.getFigures().add(new Polygon(l, Color.black));
+                editor.repaint();
+            }
+        }           
+    }
+
+    public void openFile() {
+        fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("JPG & GIF Images", "jpg", "gif"));
+        int returnVal = fileChooser.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            File path = fileChooser.getSelectedFile();
+            if (editor != null) {
+            editor.setPath_img(path);
+            editor.setImage();
+            }
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton source = (JButton) e.getSource();
         String txt = source.getToolTipText();
         
         if (txt == "New File (CTRL+N)") {
-            editor = new Editeur();
-            add(editor, BorderLayout.CENTER);
-            editor.setBackground(Color.white);
-            editor.addMouseListener(editor);
-            editor.addMouseMotionListener(editor);
-            editor.repaint();
-            this.validate();
+            if (editor == null) {
+                addEditor();
+            }
+            else if (JOptionPane.showConfirmDialog(this,
+                "Opening a new editor now will overwrite everything you've done. Do you want to continue anyway?", 
+                "New editor",
+                JOptionPane.YES_NO_OPTION) == 0) {
+                    remove(editor);
+                    addEditor();
+            }
         }
+
         else if (txt == "Save (CTRL+S)") {
             if (editor.getPath_img() != null) {
                 editor.save_img();
-            }
-            else {
+            }else {
                 editor.save_img_as();
             }
         }
+
         else if (txt == "Save As...") {
             editor.save_img_as();
         }
+
         else if (txt == "Copy (CTRL+C)") {
-            System.out.println("copy");
-            for (Figure figure : editor.getFigures()) {
-                if (figure.getSelected()) {
-                    editor.getCopys().add(figure.clone());
-                }
-            }
-            System.out.println(editor.getCopys());
-            editor.repaint();
+            copy();
         }
+
         else if (txt == "Cut (CTRL+X)") {
-            System.out.println("cut");
-            editor.getCopys().clear();
-           
-            for (Figure figure : editor.getFigures()) {
-                if (figure.getSelected()) {
-                    editor.getCopys().add(figure.clone());
-                    editor.getFigures().remove(figure);
-                }
-            }
-            editor.repaint();
+            cut();
         }
             
-            else if (txt == "Paste (CTRL+V)") {
-                System.out.println("paste");
-                System.out.println(editor.getCopys());
-                for (Figure figure : editor.getCopys()) {
-                    if (figure instanceof Point) {
-                        Point p = (Point) figure;
-                        editor.getFigures().add(new Point(p.getX() + 10, p.getY() + 10 , Color.black));
-                        editor.repaint();
-                    }
-                    else if (figure instanceof Segment) {
-                        Segment s = (Segment) figure;
-                        editor.getFigures().add(new Segment(new Point(s.getP1().getX()+10, s.getP1().getY()+10, Color.black), new Point(s.getP2().getX()+10, s.getP2().getY()+10, Color.black), Color.black));
-                    editor.repaint();
-                }
-                else if (figure instanceof Circle) {
-                    Circle c = (Circle) figure;
-                    editor.getFigures().add(new Circle(c.getName(), new Point(c.getCenter().getX()+10, c.getCenter().getY()+10, Color.black), c.getRayon(), Color.black));
-                    editor.repaint();
-                }
-                else if (figure instanceof Polygon) {
-                    Polygon p = (Polygon) figure;
-                    LinkedList<Point> l = new LinkedList<Point>();
-                    for (Point point : p.getPoints()){
-                        Point tmp = new Point(point.getX()+10, point.getY()+10, Color.black);
-                        l.add(tmp);
-                    }
-                    editor.getFigures().add(new Polygon(l, Color.black));
-                    editor.repaint();
-                }
-            }            
+        else if (txt == "Paste (CTRL+V)") {
+            paste();
         }
+
         else if (txt == "Exit (ALT+F4)" && editor != null) {
             setVisible(false);
             dispose();
         }
+        
         else if ((txt == "Point" || txt == "Segment" || txt == "Circle" || txt == "Polygon" || txt == "Draw" || txt == "Select") && editor != null){
             editor.setSelectedFigure(txt);
             if (txt == "Polygon") {
@@ -366,25 +402,19 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
         String txt = source.getText();
         
         if (txt == "New File") {
-            editor = new Editeur();
-            add(editor, BorderLayout.CENTER);
-            editor.setBackground(Color.white);
-            editor.addMouseListener(editor);
-            editor.addMouseMotionListener(editor);
-            editor.repaint();
-            this.validate();
+            if (editor == null) {
+                addEditor();
+            }
+            else if (JOptionPane.showConfirmDialog(this,
+                "Opening a new editor now will overwrite everything you've done. Do you want to continue anyway?", 
+                "New editor",
+                JOptionPane.YES_NO_OPTION) == 0) {
+                    remove(editor);
+                    addEditor();
+            }
         }
         else if (txt == "Open File ..."){
-            fileChooser = new JFileChooser();
-            fileChooser.setFileFilter(new FileNameExtensionFilter("JPG & GIF Images", "jpg", "gif"));
-            int returnVal = fileChooser.showOpenDialog(this);
-            if(returnVal == JFileChooser.APPROVE_OPTION) {
-                File path = fileChooser.getSelectedFile();
-                if (editor != null) {
-                editor.setPath_img(path);
-                editor.setImage();
-                }
-            }
+            openFile();
         }
 
         else if (txt == "Save File ...") {
@@ -398,23 +428,25 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
         else if (txt == "Save File As ...") {
             editor.save_img_as();
         }
-        else if (txt == "Undo") {
-        }
-        else if (txt == "Redo") {
-        }
+
         else if (txt == "Copy") {
+            copy();
         }
         else if (txt == "Cut") {
+            cut();
         }
+            
         else if (txt == "Paste") {
+            paste();        
         }
+
         else if (txt == "Exit") {
             setVisible(false);
             dispose();
         }
+
         else if ((txt == "Point" || txt == "Segment" || txt == "Circle" || txt == "Polygon" || txt == "Draw") && editor != null){
             editor.setSelectedFigure(txt);
-
         }
     }
 
@@ -422,7 +454,7 @@ public class InterfaceG2 extends JFrame implements ActionListener, KeyListener{
     }
 
     public static void main(String[] args) {
-        InterfaceG2 gui = new InterfaceG2("DrawApp");
+        InterfaceG gui = new InterfaceG("DrawApp");
         gui.setVisible(true);
     }
 

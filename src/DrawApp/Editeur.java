@@ -1,5 +1,3 @@
-package DrawApp;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -37,7 +35,7 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
     private String path_figures;
     private Image img;
     private JPopupMenu rightclickmenu;
-    private JMenuItem copy, cut, paste, undo, redo, translate;
+    private JMenuItem copy, cut, paste, undo, redo, translate, delete;
     private BufferedImage bufferedImg;
     private JFileChooser filechooser;
     private int polygon_size, count;
@@ -55,6 +53,8 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
         cut.addActionListener(this);
         paste = new JMenuItem("Paste", new ImageIcon("paste.png"));
         paste.addActionListener(this);
+        delete = new JMenuItem("Delete", new ImageIcon("trash.png"));
+        delete.addActionListener(this);
         translate = new JMenuItem("Translate");
         translate.addActionListener(this);
         undo = new JMenuItem("Undo", new ImageIcon("undo.png"));
@@ -64,6 +64,8 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
         rightclickmenu.add(copy);
         rightclickmenu.add(cut);
         rightclickmenu.add(paste);
+        rightclickmenu.addSeparator();
+        rightclickmenu.add(delete);
         rightclickmenu.addSeparator();
         rightclickmenu.add(translate);
         rightclickmenu.addSeparator();
@@ -100,6 +102,16 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
 
     public void setFigures(LinkedList<Figure> figures) {
         this.figures = figures;
+    }
+
+    public void delete() {
+        LinkedList<Figure> tmp = new LinkedList<Figure>();
+        for (Figure figure : figures) {
+            if (!figure.getSelected()) {
+                tmp.add(figure);
+            }
+        }
+        setFigures(tmp);
     }
 
     @Override
@@ -176,7 +188,6 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
             }
             repaint();
         }
-        System.out.println(figures);
     }
 
     @Override
@@ -198,9 +209,7 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
             }
             else if (selectedFigure == "Polygon") {
                 tmp_points.add(mouse_point);
-                System.out.println(tmp_points);
                 tmpFigure = new Polygon((LinkedList<Point>) tmp_points.clone(), new ColorUIResource(color == null ? Color.black : color));
-                System.out.println(tmpFigure);
                 tmp_points.removeLast();
             }
 
@@ -420,6 +429,9 @@ public class Editeur extends JPanel implements ActionListener, MouseInputListene
         String txt = source.getText();
         if (txt == "Translate") {
             selectedFigure = txt;
+        }
+        else if (txt == "Delete") {
+            delete();
         }
     }
 
